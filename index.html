@@ -70,7 +70,7 @@
             z-index: 10;
         }
 
-        /* Inner Scroll Wrapper for Mobile */
+        /* Inner Scroll Wrapper for Mobile - Hiding Scrollbar */
         .slide-inner {
             width: 100%;
             height: 100%;
@@ -81,7 +81,15 @@
             align-items: center;
             justify-content: flex-start; /* Align top for scroll */
             padding-top: 2rem;
-            padding-bottom: 8rem; /* Space for nav */
+            padding-bottom: 4rem; /* Reduced space since nav is minimal */
+            
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        .slide-inner::-webkit-scrollbar {
+            display: none;
         }
 
         /* Desktop centering override */
@@ -125,18 +133,6 @@
             100% { transform: translateY(0px); }
         }
 
-        /* Navigation */
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
         .grid-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -147,17 +143,52 @@
             pointer-events: none;
             z-index: 1;
         }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
+        
+        /* Minimal Navigation Dots */
+        .min-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 50;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .nav-dot {
             width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1); 
+        
+        .nav-dot.active {
+            background: #ccff00;
+            transform: scale(1.2);
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2); 
-            border-radius: 4px;
+
+        /* Swipe Hint Animation */
+        .swipe-hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            animation: fadeInOut 3s ease-in-out infinite;
+            color: rgba(255,255,255,0.5);
+            font-size: 2rem;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateX(-50%) translateX(10px); }
+            50% { opacity: 1; transform: translateX(-50%) translateX(-10px); }
         }
     </style>
 </head>
@@ -169,7 +200,7 @@
     <div class="bg-orb orb-3"></div>
     <div class="grid-overlay"></div>
 
-    <main class="relative z-10 w-full h-full">
+    <main class="relative z-10 w-full h-full" id="main-container">
 
         <!-- SLIDE 0: TITLE -->
         <div class="slide-container active" id="slide-0">
@@ -445,17 +476,14 @@
 
     </main>
 
-    <!-- FLOATING CONTROLS -->
-    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-4 md:gap-6 card-frosted px-4 md:px-6 py-2 md:py-3 rounded-full shadow-2xl w-max max-w-[90vw]">
-        <button class="nav-btn w-10 h-10 md:w-12 md:h-12 rounded-full text-white flex items-center justify-center hover:bg-white/20 active:bg-white/40" onclick="nextSlide()">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-        
-        <div class="flex gap-1.5 md:gap-2" id="dots-container"></div>
-
-        <button class="nav-btn w-10 h-10 md:w-12 md:h-12 rounded-full text-white flex items-center justify-center hover:bg-white/20 active:bg-white/40" onclick="prevSlide()">
-            <i class="fas fa-chevron-left"></i>
-        </button>
+    <!-- MINIMAL NAV DOTS (Bottom) -->
+    <div class="min-nav" id="dots-container">
+        <!-- Dots injected here -->
+    </div>
+    
+    <!-- Swipe Hint -->
+    <div class="swipe-hint">
+        <i class="fas fa-hand-pointer animate-pulse"></i>
     </div>
 
     <!-- LOGO WATERMARK -->
@@ -468,29 +496,38 @@
         const slides = document.querySelectorAll('.slide-container');
         const dotsContainer = document.getElementById('dots-container');
         const totalSlides = slides.length;
+        
+        // Touch variables
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let touchStartY = 0;
+        let touchEndY = 0;
 
         // Initialize Dots
         slides.forEach((_, idx) => {
             const dot = document.createElement('div');
-            dot.className = `w-2 h-2 md:w-3 md:h-3 rounded-full cursor-pointer transition-all duration-300 ${idx === 0 ? 'bg-[#ccff00] scale-125' : 'bg-white/30 hover:bg-white/60'}`;
+            dot.className = `nav-dot cursor-pointer ${idx === 0 ? 'active' : ''}`;
             dot.onclick = () => goToSlide(idx);
             dotsContainer.appendChild(dot);
         });
-        const dots = dotsContainer.querySelectorAll('div');
+        const dots = dotsContainer.querySelectorAll('.nav-dot');
 
         function updateUI() {
             slides.forEach((slide, idx) => {
                 slide.classList.remove('active');
                 if (idx === currentSlide) {
                     slide.classList.add('active');
-                    // Scroll inner container to top when changing slides
                     const inner = slide.querySelector('.slide-inner');
                     if(inner) inner.scrollTop = 0;
                 }
             });
 
             dots.forEach((dot, idx) => {
-                dot.className = `w-2 h-2 md:w-3 md:h-3 rounded-full cursor-pointer transition-all duration-300 ${idx === currentSlide ? 'bg-[#ccff00] scale-125' : 'bg-white/30 hover:bg-white/60'}`;
+                if (idx === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
             });
         }
 
@@ -507,6 +544,39 @@
         function goToSlide(idx) {
             currentSlide = idx;
             updateUI();
+        }
+        
+        // Handle Swipe
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            
+            // Check if horizontal swipe is dominant
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > 50) { // Threshold
+                    if (diffX > 0) {
+                        // Swiped Right -> Previous Slide (because RTL logic: right is usually back, but let's follow visual direction)
+                        // In RTL, "Next" (Left arrow) usually moves to content on the left.
+                        // Visual swipe Left (finger moves right to left) -> Go Next
+                        // Visual swipe Right (finger moves left to right) -> Go Prev
+                        prevSlide(); 
+                    } else {
+                        // Swiped Left
+                        nextSlide();
+                    }
+                }
+            }
         }
 
         document.addEventListener('keydown', (e) => {
