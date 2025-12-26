@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>استراتيجية غبقة 39: تحدي العصير - رمضان 2025</title>
+    <title>استراتيجية غبقة 39eertime: تحدي العصير - رمضان 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;400;500;700;900&display=swap" rel="stylesheet">
@@ -232,15 +232,19 @@
             50% { opacity: 1; transform: translateX(-50%) translateX(-10px); }
         }
 
-        /* Theme Toggle Button - Fixed positioning for mobile safety */
+        /* Theme Toggle Button - Corrected Positioning */
         .theme-toggle-btn {
             position: fixed;
-            top: 15px; /* Default top */
-            top: calc(15px + env(safe-area-inset-top)); /* Safe area adjusted */
-            right: 15px; /* Default right */
-            right: calc(15px + env(safe-area-inset-right)); /* Safe area adjusted */
-            z-index: 60;
-            width: 44px; /* Slightly smaller for mobile */
+            /* Top: Add generous safe area */
+            top: 25px; 
+            top: calc(25px + env(safe-area-inset-top)); 
+            
+            /* Right: Move it further away from the edge to prevent cropping */
+            right: 25px; 
+            right: calc(25px + env(safe-area-inset-right));
+            
+            z-index: 999; /* Ensure it's on top of everything */
+            width: 44px; 
             height: 44px;
             border-radius: 50%;
             background: var(--card-bg);
@@ -259,11 +263,10 @@
             transform: scale(1.1);
         }
 
-        /* Responsive specific tweaks */
         @media (min-width: 768px) {
             .theme-toggle-btn {
-                top: 20px;
-                right: 20px;
+                top: 30px;
+                right: 30px;
                 width: 48px;
                 height: 48px;
                 font-size: 1.2rem;
@@ -293,7 +296,7 @@
                     
                     <div class="w-full md:w-1/2 space-y-6 text-center md:text-right z-20 order-2 md:order-1 pb-10 md:pb-0">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full card-frosted border-l-4 border-l-[#ccff00] justify-center md:justify-start">
-                            <span class="text-xs md:text-sm font-bold tracking-wider text-primary">RAMADAN 2025 STRATEGY</span>
+                            <span class="text-xs md:text-sm font-bold tracking-wider text-primary">RAMADAN 2026 STRATEGY</span>
                         </div>
                         
                         <h1 class="text-4xl md:text-8xl font-black leading-tight">
@@ -550,7 +553,7 @@
                     </div>
 
                     <div class="card-frosted p-6 md:p-10 inline-block border-t-4 border-[#ccff00] mx-4">
-                        <p class="text-lg md:text-2xl text-primary mb-2 md:mb-4">في رمضان 2025...</p>
+                        <p class="text-lg md:text-2xl text-primary mb-2 md:mb-4">في رمضان 2026...</p>
                         <h1 class="text-3xl md:text-5xl font-black text-primary mb-2">لا تتابعنا فقط...</h1>
                         <h1 class="text-4xl md:text-6xl font-black text-gradient-lime">العب معنا!</h1>
                     </div>
@@ -571,7 +574,7 @@
     </div>
 
     <!-- LOGO WATERMARK - Adjusted for mobile safe area as well -->
-    <div class="fixed top-4 left-4 md:top-8 md:left-8 z-50 opacity-100" style="top: calc(15px + env(safe-area-inset-top)); left: calc(15px + env(safe-area-inset-left));">
+    <div class="fixed top-4 left-4 md:top-8 md:left-8 z-50 opacity-100" style="top: calc(25px + env(safe-area-inset-top)); left: calc(25px + env(safe-area-inset-left));">
         <img src="logo.png" alt="39er Time Logo" class="h-10 md:h-16 w-auto object-contain drop-shadow-lg">
     </div>
 
