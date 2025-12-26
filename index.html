@@ -10,7 +10,7 @@
     
     <style>
         :root {
-            /* Core Brand Colors (Constant) */
+            /* Core Brand Colors */
             --neon-purple: #6a0dad; 
             --neon-blue: #00e5ff;   
             --neon-lime: #ccff00;   
@@ -18,7 +18,7 @@
             /* Default Dark Theme Variables */
             --bg-color: #0f0c29;
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-secondary: rgba(255, 255, 255, 0.8);
             --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.01));
             --card-border: rgba(255, 255, 255, 0.15);
             --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -29,17 +29,16 @@
 
         [data-theme="light"] {
             /* Light Theme Variables */
-            --bg-color: #f3f4f6; /* Light Grey */
-            --text-primary: #1f2937; /* Dark Grey/Black */
-            --text-secondary: #4b5563; /* Medium Grey */
-            --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.4));
+            --bg-color: #f3f4f6;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
             --card-border: rgba(255, 255, 255, 1);
             --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
             --nav-bg: rgba(255, 255, 255, 0.5);
             --nav-dot: rgba(0, 0, 0, 0.2);
-            --nav-dot-active: #6a0dad; /* Purple for contrast in light mode */
+            --nav-dot-active: #6a0dad;
             
-            /* Adjust Neon colors slightly for light background visibility if needed */
             --neon-blue: #00b5cc; 
             --neon-lime: #a3cc00;
         }
@@ -56,7 +55,6 @@
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        /* Text Utilities utilizing CSS Variables */
         .text-primary { color: var(--text-primary); }
         .text-secondary { color: var(--text-secondary); }
         .text-brand-lime { color: var(--neon-lime); }
@@ -73,8 +71,6 @@
             animation: moveOrb 20s infinite alternate;
             transition: opacity 0.5s ease;
         }
-        
-        /* In light mode, reduce orb opacity slightly so it's not too washed out */
         [data-theme="light"] .bg-orb { opacity: 0.4; }
 
         .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--neon-purple); animation-delay: 0s; }
@@ -101,13 +97,15 @@
             pointer-events: none;
             transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
             overflow: hidden;
+            z-index: 1; /* Base level */
         }
 
+        /* Force visibility for active slide */
         .slide-container.active {
-            opacity: 1;
-            transform: scale(1) translateY(0);
+            opacity: 1 !important;
+            transform: scale(1) translateY(0) !important;
             pointer-events: all;
-            z-index: 10;
+            z-index: 20; /* Bring to front */
         }
 
         /* Inner Scroll Wrapper */
@@ -121,7 +119,7 @@
             align-items: center;
             justify-content: flex-start;
             padding-top: 2rem;
-            padding-bottom: 4rem;
+            padding-bottom: 5rem;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
@@ -147,19 +145,13 @@
             transition: background 0.5s ease, border 0.5s ease, box-shadow 0.5s ease;
         }
 
-        /* Typography Gradients */
+        /* Gradients */
         .text-gradient-lime {
             background: linear-gradient(to right, var(--neon-lime), var(--neon-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .text-gradient-purple {
-            background: linear-gradient(to right, #d53369, #daae51);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
         .float-img { animation: float 6s ease-in-out infinite; }
         @keyframes float {
             0% { transform: translateY(0px); }
@@ -175,16 +167,16 @@
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
             pointer-events: none;
-            z-index: 1;
+            z-index: 2; /* Above orbs, below content */
         }
-        /* In light mode, grid overlay needs to be dark lines */
+        
         [data-theme="light"] .grid-overlay {
             background-image: 
                 linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
         }
         
-        /* Minimal Navigation Dots */
+        /* Navigation Dots */
         .min-nav {
             position: fixed;
             bottom: 20px;
@@ -232,18 +224,14 @@
             50% { opacity: 1; transform: translateX(-50%) translateX(-10px); }
         }
 
-        /* Theme Toggle Button - Corrected Positioning */
+        /* Theme Toggle Button - Safe Position */
         .theme-toggle-btn {
             position: fixed;
-            /* Top: Add generous safe area */
             top: 25px; 
             top: calc(25px + env(safe-area-inset-top)); 
-            
-            /* Right: Move it further away from the edge to prevent cropping */
             right: 25px; 
             right: calc(25px + env(safe-area-inset-right));
-            
-            z-index: 999; /* Ensure it's on top of everything */
+            z-index: 999;
             width: 44px; 
             height: 44px;
             border-radius: 50%;
@@ -259,18 +247,24 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .theme-toggle-btn:hover {
-            transform: scale(1.1);
+        
+        /* Copyright - Safe Position */
+        .copyright {
+            position: fixed;
+            bottom: 15px;
+            bottom: calc(15px + env(safe-area-inset-bottom));
+            right: 25px;
+            right: calc(25px + env(safe-area-inset-right));
+            z-index: 99;
+            opacity: 0.6;
+            font-size: 0.7rem;
+            color: var(--text-primary);
+            pointer-events: none;
         }
 
         @media (min-width: 768px) {
-            .theme-toggle-btn {
-                top: 30px;
-                right: 30px;
-                width: 48px;
-                height: 48px;
-                font-size: 1.2rem;
-            }
+            .theme-toggle-btn { top: 30px; right: 30px; }
+            .copyright { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -287,6 +281,12 @@
         <i class="fas fa-moon" id="themeIcon"></i>
     </button>
 
+    <!-- Copyright -->
+    <div class="copyright font-english">
+        &copy; The Digital Campus co. 2026
+    </div>
+
+    <!-- MAIN CONTAINER -->
     <main class="relative z-10 w-full h-full" id="main-container">
 
         <!-- SLIDE 0: TITLE -->
@@ -310,14 +310,14 @@
 
                         <p class="text-lg md:text-xl text-primary leading-relaxed max-w-lg mx-auto md:mx-0">
                             من "المشاهدة الصامتة" إلى <span class="text-brand-lime font-bold">اللعب والمرح</span>.
-                            <br>نحول منتجات "عصير تايم" من مشروب إلى أداة للعب في كل ديوانية.
+                            <br>نحول منتجات "39eertime" من مشروب إلى أداة للعب في كل ديوانية.
                         </p>
                     </div>
 
                     <div class="w-full md:w-1/2 flex items-center justify-center relative order-1 md:order-2 mt-8 md:mt-0">
                         <div class="absolute w-[280px] h-[350px] md:w-[400px] md:h-[500px] card-frosted transform rotate-6 z-0 border-white/10 opacity-50"></div>
                         <div class="relative w-[260px] h-[380px] md:w-[380px] md:h-[550px] rounded-3xl overflow-hidden shadow-2xl z-10 float-img border border-white/20 group card-frosted p-0">
-                            <!-- Main Ali Najim Image -->
+                            <!-- Main Image -->
                             <img src="ali.png" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Ali Najim">
                             <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 text-center">
                                 <span class="text-[#ccff00] font-bold text-lg md:text-xl">علي نجم: راعي التحدي</span>
@@ -521,7 +521,7 @@
                         <div class="card-frosted bg-[#ccff00]/30 flex items-center justify-center text-4xl animate-pulse delay-75">🟢</div>
                         <div class="card-frosted bg-[#00e5ff]/30 flex items-center justify-center text-4xl animate-pulse delay-150">🔵</div>
                         <div class="card-frosted bg-black/50 flex items-center justify-center text-xl font-bold border border-white/20">
-                            <span class="text-white">39er</span><br><span class="text-white">Vibes</span>
+                            <span class="text-white">39eertime</span><br><span class="text-white">Vibes</span>
                         </div>
                     </div>
                 </div>
@@ -564,17 +564,15 @@
     </main>
 
     <!-- MINIMAL NAV DOTS (Bottom) -->
-    <div class="min-nav" id="dots-container">
-        <!-- Dots injected here -->
-    </div>
+    <div class="min-nav" id="dots-container"></div>
     
     <!-- Swipe Hint -->
     <div class="swipe-hint">
         <i class="fas fa-hand-pointer animate-pulse"></i>
     </div>
 
-    <!-- LOGO WATERMARK - Adjusted for mobile safe area as well -->
-    <div class="fixed top-4 left-4 md:top-8 md:left-8 z-50 opacity-100" style="top: calc(25px + env(safe-area-inset-top)); left: calc(25px + env(safe-area-inset-left));">
+    <!-- LOGO WATERMARK - Fixed for Mobile Safe Area -->
+    <div class="fixed top-4 left-4 md:top-8 md:left-8 z-50 opacity-100" style="top: calc(15px + env(safe-area-inset-top)); left: calc(15px + env(safe-area-inset-left));">
         <img src="logo.png" alt="39er Time Logo" class="h-10 md:h-16 w-auto object-contain drop-shadow-lg">
     </div>
 
@@ -595,7 +593,6 @@
         const themeIcon = document.getElementById('themeIcon');
         const htmlElement = document.documentElement;
 
-        // Check local storage or default to dark
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
 
@@ -609,7 +606,6 @@
             htmlElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
             
-            // Update Icon
             if (theme === 'dark') {
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
@@ -618,7 +614,6 @@
                 themeIcon.classList.add('fa-sun');
             }
         }
-
 
         // Initialize Dots
         slides.forEach((_, idx) => {
@@ -697,3 +692,4 @@
     </script>
 </body>
 </html>
+```
