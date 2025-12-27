@@ -82,56 +82,47 @@
             100% { transform: translate(30px, 50px) scale(1.1); }
         }
 
+        /* Main Container for Vertical Snap Scrolling */
+        #main-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            position: relative;
+            z-index: 10;
+        }
+
         /* Slide System */
         .slide-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: relative;
+            height: 100vh;
             width: 100%;
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transform: scale(0.95) translateY(20px);
-            pointer-events: none;
-            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            scroll-snap-align: start;
+            opacity: 0.3;
+            transform: scale(0.95);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
             overflow: hidden;
-            z-index: 1; 
         }
 
-        /* Force visibility for active slide */
-        .slide-container.active {
+        .slide-container.in-view {
             opacity: 1 !important;
-            transform: scale(1) translateY(0) !important;
-            pointer-events: all;
-            z-index: 20; 
+            transform: scale(1) !important;
         }
 
-        /* Inner Scroll Wrapper */
+        /* Inner Content Wrapper */
         .slide-inner {
             width: 100%;
             height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding-top: 2rem;
-            padding-bottom: 5rem;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .slide-inner::-webkit-scrollbar { display: none; }
-
-        @media (min-width: 768px) {
-            .slide-inner {
-                justify-content: center;
-                padding-top: 0;
-                padding-bottom: 0;
-                overflow-y: hidden;
-            }
+            justify-content: center;
+            padding-top: 4rem;
+            padding-bottom: 4rem;
         }
 
         /* Glass Cards */
@@ -154,21 +145,16 @@
             width: 100%;
             max-width: 100%;
             scroll-snap-type: x mandatory;
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
         }
-        .recipe-scroller::-webkit-scrollbar {
-            display: none;
-        }
+        .recipe-scroller::-webkit-scrollbar { display: none; }
         
         .recipe-card {
-            flex: 0 0 85%; /* Mobile: 85% width */
+            flex: 0 0 85%;
             max-width: 320px;
             scroll-snap-align: center;
             transition: transform 0.3s;
-        }
-        .recipe-card:hover {
-            transform: translateY(-5px);
         }
         
         @media (min-width: 768px) {
@@ -205,7 +191,7 @@
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
             pointer-events: none;
-            z-index: 2; /* Above orbs, below content */
+            z-index: 2; 
         }
         
         [data-theme="light"] .grid-overlay {
@@ -236,30 +222,32 @@
             background: var(--nav-dot);
             border-radius: 50%;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .nav-dot.active {
             background: var(--nav-dot-active);
-            transform: scale(1.2);
+            transform: scale(1.4);
         }
 
-        /* Swipe Hint */
-        .swipe-hint {
+        /* Scroll Hint */
+        .scroll-hint {
             position: fixed;
-            bottom: 60px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 40;
             opacity: 0;
             pointer-events: none;
-            animation: fadeInOut 3s ease-in-out infinite;
+            animation: bounceVertical 2s infinite;
             color: var(--text-secondary);
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
         
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translateX(-50%) translateX(10px); }
-            50% { opacity: 1; transform: translateX(-50%) translateX(-10px); }
+        @keyframes bounceVertical {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-10px);}
+            60% {transform: translateX(-50%) translateY(-5px);}
         }
 
         /* Theme Toggle Button - Safe Position */
@@ -293,17 +281,26 @@
             bottom: calc(15px + env(safe-area-inset-bottom));
             right: 25px;
             right: calc(25px + env(safe-area-inset-right));
-            z-index: 100; /* Very high z-index to sit above slides */
-            opacity: 0.8; /* Increased opacity */
+            z-index: 100;
+            opacity: 0.8;
             font-size: 0.75rem;
             color: var(--text-primary);
             pointer-events: none;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Shadow for readability */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         @media (min-width: 768px) {
             .theme-toggle-btn { top: 30px; right: 30px; }
             .copyright { font-size: 0.9rem; right: 30px; bottom: 20px; }
+            
+            .min-nav {
+                bottom: auto;
+                left: 30px;
+                top: 50%;
+                transform: translateY(-50%);
+                flex-direction: column;
+                padding: 16px 8px;
+            }
         }
     </style>
 </head>
@@ -325,15 +322,15 @@
         &copy; The Digital Campus co. 2026
     </div>
 
-    <!-- MAIN CONTAINER -->
-    <main class="relative z-10 w-full h-full" id="main-container">
+    <!-- MAIN CONTAINER (Vertical Scroll) -->
+    <main id="main-container">
 
         <!-- SLIDE 0: TITLE -->
-        <div class="slide-container active" id="slide-0">
-            <div class="slide-inner w-full">
+        <div class="slide-container" id="slide-0">
+            <div class="slide-inner">
                 <div class="w-11/12 max-w-7xl flex flex-col md:flex-row items-center justify-between p-4 gap-8 md:gap-4">
                     
-                    <div class="w-full md:w-1/2 space-y-6 text-center md:text-right z-20 order-2 md:order-1 pb-10 md:pb-0">
+                    <div class="w-full md:w-1/2 space-y-6 text-center md:text-right z-20 order-2 md:order-1">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full card-frosted border-l-4 border-l-[#ccff00] justify-center md:justify-start">
                             <span class="text-xs md:text-sm font-bold tracking-wider text-primary">RAMADAN 2025: STUDIO EDITION</span>
                         </div>
@@ -349,11 +346,11 @@
 
                         <p class="text-lg md:text-xl text-primary leading-relaxed max-w-lg mx-auto md:mx-0">
                             علي نجم هو <span class="text-brand-lime font-bold">"خبير المزاج"</span> في استوديو 39eertime.
-                            <br>كل مشكلة رمضانية لها "خلطة" تعدل المزاج.
+                            <br>نستقبل مشاكلكم الصوتية، ونخلط لها الحل المناسب.
                         </p>
                     </div>
 
-                    <div class="w-full md:w-1/2 flex items-center justify-center relative order-1 md:order-2 mt-8 md:mt-0">
+                    <div class="w-full md:w-1/2 flex items-center justify-center relative order-1 md:order-2">
                         <div class="absolute w-[280px] h-[350px] md:w-[400px] md:h-[500px] card-frosted transform rotate-6 z-0 border-white/10 opacity-50"></div>
                         <div class="relative w-[260px] h-[380px] md:w-[380px] md:h-[550px] rounded-3xl overflow-hidden shadow-2xl z-10 float-img border border-white/20 group card-frosted p-0">
                             <img src="ali.png" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Ali Najim">
@@ -361,8 +358,6 @@
                                 <span class="text-[#ccff00] font-bold text-lg md:text-xl">عيادة المزاج 🩺</span>
                             </div>
                         </div>
-                        <div class="absolute top-0 right-0 md:top-20 md:right-10 text-4xl md:text-6xl animate-bounce delay-1000 text-primary">🎙️</div>
-                        <div class="absolute bottom-0 left-0 md:bottom-20 md:left-0 text-4xl md:text-5xl animate-bounce text-primary">🥤</div>
                     </div>
                 </div>
             </div>
@@ -370,60 +365,43 @@
 
         <!-- SLIDE 1: THE STUDIO CONCEPT -->
         <div class="slide-container" id="slide-1">
-            <div class="slide-inner w-full">
-                <div class="w-11/12 max-w-5xl flex flex-col items-center justify-center min-h-min md:h-full py-10 md:py-0 text-center">
-                    <div class="md:absolute md:top-10 md:left-10 opacity-20 text-6xl md:text-9xl font-black text-primary mb-4 md:mb-0">01</div>
-                    
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-5xl flex flex-col items-center justify-center text-center">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4">01</div>
                     <h2 class="text-3xl md:text-5xl font-bold mb-8 text-primary">الفكرة: الاستوديو التفاعلي</h2>
                     <h3 class="text-2xl md:text-4xl font-black text-brand-lime mb-8 leading-tight">"مشاكلكم... خلطاتنا"</h3>
 
                     <div class="card-frosted p-8 md:p-12 w-full relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-[#ccff00] to-[#00e5ff]"></div>
-                        
                         <p class="text-lg md:text-2xl text-primary leading-loose font-medium">
                             بسبب ضيق الوقت وزحمة رمضان، نستبدل الزيارات الميدانية بـ <span class="text-brand-blue font-bold">"مجلس إلكتروني" (Cyber-Majlis)</span>.
                             <br><br>
-                            علي نجم يجلس في استوديو 39eertime المجهز، ويستقبل "رسائل صوتية" من الجمهور تحكي مواقفهم المضحكة في رمضان (الجوع، الزحمة، مواعين السحور).
+                            علي نجم يجلس في استوديو 39eertime المجهز، ويستقبل "رسائل صوتية" من الجمهور.
                             <br><br>
                             دور علي؟ <span class="text-purple-400 font-bold">"تشخيص الحالة"</span> وصرف "عصير محدد" كعلاج فوري لتعديل المزاج.
                         </p>
-                        
-                        <div class="absolute -bottom-10 -left-10 text-9xl opacity-10 text-primary rotate-12 group-hover:rotate-0 transition duration-700 hidden md:block">
-                            <i class="fas fa-microphone-alt"></i>
-                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 2: WHY PRE-RECORDED? -->
+        <!-- SLIDE 2: WHY PRE-RECORDED -->
         <div class="slide-container" id="slide-2">
-            <div class="slide-inner w-full">
-                <div class="w-11/12 max-w-6xl flex flex-col items-center justify-center min-h-min md:h-full py-10 md:py-0">
-                    <div class="md:absolute md:top-10 md:left-10 opacity-20 text-6xl md:text-9xl font-black text-primary mb-4 md:mb-0">02</div>
-                    <h2 class="text-3xl md:text-5xl font-bold mb-8 md:mb-12 text-center text-primary">لماذا "مسجّل"؟ (Production Value)</h2>
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-6xl flex flex-col items-center justify-center">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4">02</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-8 text-center text-primary">لماذا "مسجّل"؟</h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full">
-                        <div class="card-frosted p-6 md:p-8 border-red-500/30">
-                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-red-500/20 flex items-center justify-center text-2xl md:text-3xl mb-4 md:mb-6 text-red-400">
-                                <i class="fas fa-video-slash"></i>
-                            </div>
-                            <h3 class="text-xl md:text-2xl font-bold mb-3 text-primary">صعوبة الميدان</h3>
-                            <p class="text-primary leading-relaxed text-sm md:text-base">
-                                التصوير الميداني في رمضان مرهق، غير مضمون النتائج، والصوت غالباً سيء بسبب الضوضاء. وعلي نجم وقته محدود جداً.
-                            </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                        <div class="card-frosted p-6 border-red-500/30">
+                            <i class="fas fa-video-slash text-4xl text-red-400 mb-4"></i>
+                            <h3 class="text-xl font-bold text-primary mb-2">صعوبة الميدان</h3>
+                            <p class="text-primary text-sm">ضوضاء، لوجستيات صعبة، وضيق وقت.</p>
                         </div>
-
-                        <div class="card-frosted p-6 md:p-8 border-[#ccff00]/30 shadow-2xl relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ccff00] to-[#00e5ff]"></div>
-                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-[#ccff00]/20 flex items-center justify-center text-2xl md:text-3xl mb-4 md:mb-6 text-[#ccff00]">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <h3 class="text-xl md:text-2xl font-bold mb-3 text-primary">جودة الاستوديو</h3>
-                            <p class="text-primary leading-relaxed text-sm md:text-base">
-                                <span class="text-brand-lime font-bold">تحكم كامل:</span> إضاءة سينمائية، صوت نقي، وتركيز كامل على المنتج (Product Shots). يمكن تصوير 30 حلقة في يومين فقط.
-                            </p>
+                        <div class="card-frosted p-6 border-[#ccff00]/30">
+                            <i class="fas fa-check-circle text-4xl text-[#ccff00] mb-4"></i>
+                            <h3 class="text-xl font-bold text-primary mb-2">جودة الاستوديو</h3>
+                            <p class="text-primary text-sm">تحكم كامل بالإضاءة والصوت، وتصوير 30 حلقة في يومين.</p>
                         </div>
                     </div>
                 </div>
@@ -432,33 +410,21 @@
 
         <!-- SLIDE 3: ALI'S NEW ROLE -->
         <div class="slide-container" id="slide-3">
-            <div class="slide-inner w-full">
-                <div class="w-full max-w-6xl flex flex-col items-center justify-center min-h-min md:h-full p-4 py-10 md:py-0">
-                    <div class="md:absolute md:top-10 md:left-10 opacity-20 text-6xl md:text-9xl font-black text-primary mb-4 md:mb-0">03</div>
-                    <h2 class="text-2xl md:text-4xl font-bold mb-8 md:mb-10 text-center text-primary">الشخصية: "خبير المزاج"</h2>
+            <div class="slide-inner">
+                <div class="w-full max-w-6xl flex flex-col items-center justify-center">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4">03</div>
+                    <h2 class="text-2xl md:text-4xl font-bold mb-8 text-center text-primary">الشخصية: "خبير المزاج"</h2>
                     
-                    <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-center w-full">
-                        <div class="w-full md:w-1/3 text-center opacity-70 transition">
-                            <div class="h-48 md:h-64 rounded-3xl overflow-hidden mb-4 border border-white/10 mx-auto w-3/4 md:w-full grayscale hover:grayscale-0 card-frosted p-0">
-                                <img src="ali.png" class="w-full h-full object-cover" alt="Serious Ali">
-                            </div>
-                            <h3 class="text-lg md:text-xl font-bold text-primary">المستمع العميق</h3>
-                            <p class="text-sm text-secondary mt-1">يستمع للمشاكل بجدية (برنامجه الإذاعي)</p>
+                    <div class="flex flex-col md:flex-row gap-8 items-center w-full justify-center">
+                        <div class="w-full md:w-1/3 text-center opacity-70 grayscale">
+                            <img src="ali.png" class="w-48 h-64 object-cover mx-auto rounded-xl mb-4 border border-white/20">
+                            <h3 class="text-xl font-bold text-primary">المستمع</h3>
                         </div>
-
-                        <div class="text-3xl md:text-4xl text-brand-lime animate-pulse transform rotate-90 md:rotate-0">
-                            <i class="fas fa-angle-double-left md:hidden"></i>
-                            <i class="fas fa-angle-double-down hidden md:block lg:hidden"></i>
-                            <i class="fas fa-angle-double-left hidden lg:block"></i>
-                        </div>
-
-                        <div class="w-full md:w-1/3 text-center transform md:scale-110">
-                            <div class="h-64 md:h-80 rounded-3xl overflow-hidden mb-4 border-2 border-[#00e5ff] shadow-[0_0_30px_rgba(0,229,255,0.3)] mx-auto w-3/4 md:w-full card-frosted p-0">
-                                <img src="ali.png" class="w-full h-full object-cover" alt="Fun Ali">
-                            </div>
-                            <h3 class="text-xl md:text-2xl font-bold text-primary">المعالج الساخر</h3>
-                            <p class="text-sm md:text-md text-brand-blue mt-1 font-bold">"شخصية الاستوديو"</p>
-                            <p class="text-xs md:text-sm text-primary mt-2 max-w-xs mx-auto">يسمع المشكلة، يعلق بذكاء وسرعة بديهة، ويخلط الحل (العصير) أمام الكاميرا.</p>
+                        <i class="fas fa-arrow-left text-4xl text-brand-lime hidden md:block"></i>
+                        <i class="fas fa-arrow-down text-4xl text-brand-lime md:hidden"></i>
+                        <div class="w-full md:w-1/3 text-center">
+                            <img src="ali.png" class="w-48 h-64 object-cover mx-auto rounded-xl mb-4 border-2 border-[#00e5ff] shadow-lg">
+                            <h3 class="text-xl font-bold text-primary">المعالج الساخر</h3>
                         </div>
                     </div>
                 </div>
@@ -467,174 +433,91 @@
 
         <!-- SLIDE 4: EPISODE STRUCTURE -->
         <div class="slide-container" id="slide-4">
-            <div class="slide-inner w-full">
-                <div class="w-full max-w-7xl px-4 flex flex-col justify-center min-h-min md:h-full py-10 md:py-0">
-                    <div class="md:absolute md:top-10 md:left-10 opacity-20 text-6xl md:text-9xl font-black text-primary mb-4 md:mb-0 text-center md:text-left">04</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center text-primary">هيكل الحلقة (The Formula)</h2>
+            <div class="slide-inner">
+                <div class="w-full max-w-7xl px-4 flex flex-col justify-center">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4 text-center">04</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">هيكل الحلقة</h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 pb-20 md:pb-0">
-                        <div class="card-frosted p-5 md:p-6 hover:bg-white/5 transition duration-500 group">
-                            <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl md:text-2xl mb-3 md:mb-4">
-                                <i class="fas fa-comment-dots"></i>
-                            </div>
-                            <h3 class="text-lg md:text-xl font-bold text-primary mb-1">الشكوى (Voice Note)</h3>
-                            <p class="text-xs md:text-sm text-purple-400 font-bold mb-3">The Problem</p>
-                            <ul class="text-sm text-primary space-y-2 list-disc list-inside opacity-90">
-                                <li>نسمع رسالة صوتية مضحكة.</li>
-                                <li>مثال: "علي، تسحرت مالح وريجي ناشف!".</li>
-                                <li>رد فعل علي (وجهة نظر كوميدية).</li>
-                            </ul>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="card-frosted p-5 text-center">
+                            <i class="fas fa-comment-dots text-2xl text-purple-400 mb-2"></i>
+                            <h3 class="font-bold text-primary">1. الشكوى</h3>
+                            <p class="text-xs text-primary">رسالة صوتية مضحكة</p>
                         </div>
-
-                        <div class="card-frosted p-5 md:p-6 hover:bg-white/5 transition duration-500 group border-t-2 border-[#ccff00]">
-                            <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#ccff00]/20 text-[#ccff00] flex items-center justify-center text-xl md:text-2xl mb-3 md:mb-4">
-                                <i class="fas fa-blender"></i>
-                            </div>
-                            <h3 class="text-lg md:text-xl font-bold text-primary mb-1">الخلطة (The Mix)</h3>
-                            <p class="text-xs md:text-sm text-primary font-bold mb-3">The Solution</p>
-                            <ul class="text-sm text-primary space-y-2 list-disc list-inside opacity-90">
-                                <li>علي يشغل الخلاط (Sound Effect).</li>
-                                <li>"مالك الا يسرسح 39eertime".</li>
-                                <li>لقطات جمالية (B-Roll) للمنتج وهو يسكب.</li>
-                            </ul>
+                        <div class="card-frosted p-5 text-center border-t-2 border-[#ccff00]">
+                            <i class="fas fa-blender text-2xl text-[#ccff00] mb-2"></i>
+                            <h3 class="font-bold text-primary">2. الخلطة</h3>
+                            <p class="text-xs text-primary">تحضير الحل (العصير)</p>
                         </div>
-
-                        <div class="card-frosted p-5 md:p-6 hover:bg-white/5 transition duration-500 group">
-                            <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#00e5ff]/20 text-[#00e5ff] flex items-center justify-center text-xl md:text-2xl mb-3 md:mb-4">
-                                <i class="fas fa-share-alt"></i>
-                            </div>
-                            <h3 class="text-lg md:text-xl font-bold text-primary mb-1">شاركنا مشكلتك</h3>
-                            <p class="text-xs md:text-sm text-brand-blue font-bold mb-3">Call to Action</p>
-                            <ul class="text-sm text-primary space-y-2 list-disc list-inside opacity-90">
-                                <li>"وأنتوا شنو مخرب مزاجكم؟".</li>
-                                <li>دعوة الجمهور لإرسال فويس نوت.</li>
-                                <li>كود خصم خاص باسم "المزاج".</li>
-                            </ul>
+                        <div class="card-frosted p-5 text-center">
+                            <i class="fas fa-share-alt text-2xl text-brand-blue mb-2"></i>
+                            <h3 class="font-bold text-primary">3. المشاركة</h3>
+                            <p class="text-xs text-primary">دعوة الجمهور للمشاركة</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 5: RECIPE EXAMPLES (NEW) -->
+        <!-- SLIDE 5: RECIPE EXAMPLES -->
         <div class="slide-container" id="slide-5">
-            <div class="slide-inner w-full">
-                <div class="w-full max-w-7xl px-4 flex flex-col justify-center min-h-min md:h-full py-10 md:py-0">
-                    <div class="md:absolute md:top-10 md:left-10 opacity-20 text-6xl md:text-9xl font-black text-primary mb-4 md:mb-0 text-center md:text-left">05</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">أمثلة الخلطات (Recipes)</h2>
+            <div class="slide-inner">
+                <div class="w-full max-w-7xl px-4 flex flex-col justify-center">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4 text-center">05</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">أمثلة الخلطات</h2>
                     
                     <div class="recipe-scroller">
                         <!-- Card 1 -->
                         <div class="recipe-card card-frosted p-6 border-b-4 border-red-500">
                             <div class="text-4xl mb-4 text-red-400"><i class="fas fa-car-crash"></i></div>
-                            <h3 class="text-xl font-bold text-primary mb-1">علاج الزحمة</h3>
-                            <p class="text-sm text-secondary mb-3">المشكلة: علقان بالزحمة قبل الفطور</p>
-                            <div class="bg-white/10 p-3 rounded-lg mb-3">
-                                <h4 class="font-bold text-brand-lime text-lg">"برّد على قلبك"</h4>
-                                <p class="text-xs text-primary mt-1">رقي مثلج + ماي ورد + ليمون</p>
-                            </div>
-                            <p class="text-xs italic text-secondary">"زحمة الشارع ولا زحمة المخ... اشرب وانسى!"</p>
+                            <h3 class="text-xl font-bold text-primary">علاج الزحمة</h3>
+                            <p class="text-xs text-primary mt-2">رقي مثلج + ماي ورد + ليمون</p>
                         </div>
-
                         <!-- Card 2 -->
                         <div class="recipe-card card-frosted p-6 border-b-4 border-yellow-400">
                             <div class="text-4xl mb-4 text-yellow-400"><i class="fas fa-bolt"></i></div>
-                            <h3 class="text-xl font-bold text-primary mb-1">شاحن الطاقة</h3>
-                            <p class="text-sm text-secondary mb-3">المشكلة: خمول بعد الفطور وقبل التراويح</p>
-                            <div class="bg-white/10 p-3 rounded-lg mb-3">
-                                <h4 class="font-bold text-brand-lime text-lg">"باور بانك"</h4>
-                                <p class="text-xs text-primary mt-1">تمر + موز + زبدة فول سوداني</p>
-                            </div>
-                            <p class="text-xs italic text-secondary">"لا تدور شاحن، اشرب هذا واركض لمكة!"</p>
+                            <h3 class="text-xl font-bold text-primary">شاحن الطاقة</h3>
+                            <p class="text-xs text-primary mt-2">تمر + موز + زبدة فول سوداني</p>
                         </div>
-
                         <!-- Card 3 -->
                         <div class="recipe-card card-frosted p-6 border-b-4 border-pink-500">
                             <div class="text-4xl mb-4 text-pink-500"><i class="fas fa-heart"></i></div>
-                            <h3 class="text-xl font-bold text-primary mb-1">جرعة الدلال</h3>
-                            <p class="text-sm text-secondary mb-3">المشكلة: يوم طويل وتبي مكافأة</p>
-                            <div class="bg-white/10 p-3 rounded-lg mb-3">
-                                <h4 class="font-bold text-brand-lime text-lg">"فرحة العيد"</h4>
-                                <p class="text-xs text-primary mt-1">مانجا + آيس كريم + كيندر</p>
-                            </div>
-                            <p class="text-xs italic text-secondary">"السعرات ما تنحسب برمضان... أعتقد."</p>
+                            <h3 class="text-xl font-bold text-primary">جرعة الدلال</h3>
+                            <p class="text-xs text-primary mt-2">مانجا + آيس كريم + كيندر</p>
                         </div>
-
                         <!-- Card 4 -->
                         <div class="recipe-card card-frosted p-6 border-b-4 border-green-500">
                             <div class="text-4xl mb-4 text-green-500"><i class="fas fa-users"></i></div>
-                            <h3 class="text-xl font-bold text-primary mb-1">مخفف التوتر</h3>
-                            <p class="text-sm text-secondary mb-3">المشكلة: أسئلة الأقارب المحرجة</p>
-                            <div class="bg-white/10 p-3 rounded-lg mb-3">
-                                <h4 class="font-bold text-brand-lime text-lg">"رواق"</h4>
-                                <p class="text-xs text-primary mt-1">أفوكادو + عسل + كاجو</p>
-                            </div>
-                            <p class="text-xs italic text-secondary">"خلك مشغول بالمكسرات ولا تجاوبهم."</p>
+                            <h3 class="text-xl font-bold text-primary">مخفف التوتر</h3>
+                            <p class="text-xs text-primary mt-2">أفوكادو + عسل + كاجو</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 6: VISUAL STYLE -->
+        <!-- SLIDE 6: KPIs & CLOSING -->
         <div class="slide-container" id="slide-6">
-            <div class="slide-inner w-full">
-                <div class="w-full max-w-6xl flex flex-col md:flex-row gap-8 p-4 items-center justify-center min-h-min md:h-full py-10 md:py-0">
-                    <div class="w-full md:w-1/2 text-center md:text-right space-y-6">
-                        <h2 class="text-4xl md:text-5xl font-bold text-primary leading-tight">شكل الاستوديو<br><span class="text-gradient-lime">Cyber Majlis</span></h2>
-                        <p class="text-primary text-base md:text-lg max-w-md mx-auto md:mx-0">
-                            بيئة معزولة، مريحة، وعصرية. تجمع بين دفء رمضان وألوان 39eertime النيون.
-                        </p>
-                        
-                        <div class="card-frosted p-4 border-l-4 border-purple-500 text-right">
-                            <h4 class="font-bold text-primary mb-1">الديكور</h4>
-                            <p class="text-sm text-primary">خلفية زجاجية، إضاءة RGB خافتة، ميكروفون بودكاست احترافي، وكأس 39eertime هو البطل.</p>
-                        </div>
-
-                        <div class="card-frosted p-4 border-l-4 border-[#00e5ff] text-right">
-                            <h4 class="font-bold text-primary mb-1">التصوير</h4>
-                            <p class="text-sm text-primary">كادر ثابت (Static) مع زومات سريعة (Crash Zooms) لتعزيز الكوميديا وردود الفعل.</p>
-                        </div>
-                    </div>
+            <div class="slide-inner">
+                <div class="w-full max-w-5xl text-center flex flex-col justify-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-primary">مؤشرات النجاح</h2>
                     
-                    <div class="w-full md:w-1/2 grid grid-cols-2 gap-4 h-64 md:h-96 relative mt-8 md:mt-0">
-                        <div class="card-frosted bg-[#6a0dad]/30 flex items-center justify-center text-4xl animate-pulse">🟣</div>
-                        <div class="card-frosted bg-[#ccff00]/30 flex items-center justify-center text-4xl animate-pulse delay-75">🟢</div>
-                        <div class="card-frosted bg-[#00e5ff]/30 flex items-center justify-center text-4xl animate-pulse delay-150">🔵</div>
-                        <div class="card-frosted bg-black/50 flex items-center justify-center text-xl font-bold border border-white/20">
-                            <span class="text-white">Neon</span><br><span class="text-white">Studio</span>
+                    <div class="grid grid-cols-3 gap-4 mb-10 w-full px-4">
+                        <div class="card-frosted p-4">
+                            <div class="text-3xl font-black text-brand-lime">30</div>
+                            <div class="text-sm font-bold text-primary">حلقة</div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 7: KPIs & CLOSING -->
-        <div class="slide-container" id="slide-7">
-            <div class="slide-inner w-full">
-                <div class="w-full max-w-5xl text-center flex flex-col justify-center min-h-min md:h-full py-10 md:py-0">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-8 md:mb-12 text-primary">مؤشرات النجاح (KPIs)</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-10 md:mb-16 w-full px-4">
-                        <div class="card-frosted p-6 md:p-8">
-                            <div class="text-4xl md:text-5xl font-black text-brand-lime mb-2">30</div>
-                            <div class="text-lg md:text-xl font-bold text-primary">حلقة (Reels)</div>
-                            <p class="text-sm text-primary mt-2">محتوى يومي ثابت بجودة عالية</p>
+                        <div class="card-frosted p-4">
+                            <div class="text-3xl font-black text-brand-blue">High</div>
+                            <div class="text-sm font-bold text-primary">Retention</div>
                         </div>
-                        <div class="card-frosted p-6 md:p-8">
-                            <div class="text-4xl md:text-5xl font-black text-brand-blue mb-2">High</div>
-                            <div class="text-lg md:text-xl font-bold text-primary">Retention</div>
-                            <p class="text-sm text-primary mt-2">بسبب قصر مدة الفيديو وسرعة الإيقاع</p>
-                        </div>
-                        <div class="card-frosted p-6 md:p-8">
-                            <div class="text-4xl md:text-5xl font-black text-purple-400 mb-2">DM</div>
-                            <div class="text-lg md:text-xl font-bold text-primary">Engagement</div>
-                            <p class="text-sm text-primary mt-2">الجمهور يرسل مشاكله على الخاص</p>
+                        <div class="card-frosted p-4">
+                            <div class="text-3xl font-black text-purple-400">DM</div>
+                            <div class="text-sm font-bold text-primary">Engagement</div>
                         </div>
                     </div>
 
-                    <div class="card-frosted p-6 md:p-10 inline-block border-t-4 border-[#ccff00] mx-4">
-                        <p class="text-lg md:text-2xl text-primary mb-2 md:mb-4">رمضان 2025...</p>
+                    <div class="card-frosted p-8 inline-block border-t-4 border-[#ccff00] mx-4">
                         <h1 class="text-3xl md:text-5xl font-black text-primary mb-2">مزاجك...</h1>
                         <h1 class="text-4xl md:text-6xl font-black text-gradient-lime">بالخلاط!</h1>
                     </div>
@@ -648,8 +531,8 @@
     <div class="min-nav" id="dots-container"></div>
     
     <!-- Swipe Hint -->
-    <div class="swipe-hint">
-        <i class="fas fa-hand-pointer animate-pulse"></i>
+    <div class="scroll-hint">
+        <i class="fas fa-chevron-down"></i>
     </div>
 
     <!-- LOGO WATERMARK -->
@@ -658,18 +541,75 @@
     </div>
 
     <script>
-        let currentSlide = 0;
+        // Intersection Observer for Vertical Scroll
         const slides = document.querySelectorAll('.slide-container');
         const dotsContainer = document.getElementById('dots-container');
-        const totalSlides = slides.length;
+        let currentSlide = 0; // Track current slide for keyboard nav
         
-        // Touch variables
-        let touchStartX = 0;
-        let touchEndX = 0;
-        let touchStartY = 0;
-        let touchEndY = 0;
+        // Create Dots
+        slides.forEach((slide, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('nav-dot');
+            if (index === 0) dot.classList.add('active');
+            
+            dot.addEventListener('click', () => {
+                slide.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            dotsContainer.appendChild(dot);
+        });
+        
+        const dots = document.querySelectorAll('.nav-dot');
 
-        // Theme Toggle Logic
+        const observerOptions = {
+            root: document.getElementById('main-container'),
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Activate Animation
+                    entry.target.classList.add('in-view');
+                    
+                    // Update Dots
+                    const index = Array.from(slides).indexOf(entry.target);
+                    currentSlide = index; // Sync keyboard state
+                    
+                    dots.forEach(d => d.classList.remove('active'));
+                    if(dots[index]) dots[index].classList.add('active');
+                    
+                    // Hide Scroll Hint on last slide
+                    const hint = document.querySelector('.scroll-hint');
+                    if (index === slides.length - 1) {
+                        hint.style.display = 'none';
+                    } else {
+                        hint.style.display = 'block';
+                    }
+                } else {
+                    entry.target.classList.remove('in-view');
+                }
+            });
+        }, observerOptions);
+
+        slides.forEach(slide => {
+            observer.observe(slide);
+        });
+
+        // Keyboard Navigation (Bound, No Looping)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { // Next
+                if (currentSlide < slides.length - 1) {
+                    slides[currentSlide + 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { // Previous
+                if (currentSlide > 0) {
+                    slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+
+        // Theme Toggle
         const themeToggleBtn = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
         const htmlElement = document.documentElement;
@@ -686,7 +626,6 @@
         function setTheme(theme) {
             htmlElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
-            
             if (theme === 'dark') {
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
@@ -695,81 +634,6 @@
                 themeIcon.classList.add('fa-sun');
             }
         }
-
-        // Initialize Dots
-        slides.forEach((_, idx) => {
-            const dot = document.createElement('div');
-            dot.className = `nav-dot cursor-pointer ${idx === 0 ? 'active' : ''}`;
-            dot.onclick = () => goToSlide(idx);
-            dotsContainer.appendChild(dot);
-        });
-        const dots = dotsContainer.querySelectorAll('.nav-dot');
-
-        function updateUI() {
-            slides.forEach((slide, idx) => {
-                slide.classList.remove('active');
-                if (idx === currentSlide) {
-                    slide.classList.add('active');
-                    const inner = slide.querySelector('.slide-inner');
-                    if(inner) inner.scrollTop = 0;
-                }
-            });
-
-            dots.forEach((dot, idx) => {
-                if (idx === currentSlide) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateUI();
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            updateUI();
-        }
-
-        function goToSlide(idx) {
-            currentSlide = idx;
-            updateUI();
-        }
-        
-        // Handle Swipe
-        document.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        });
-
-        document.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            const diffX = touchEndX - touchStartX;
-            const diffY = touchEndY - touchStartY;
-            
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > 50) { 
-                    if (diffX > 0) {
-                        prevSlide(); 
-                    } else {
-                        nextSlide();
-                    }
-                }
-            }
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') nextSlide(); 
-            if (e.key === 'ArrowRight') prevSlide();
-        });
     </script>
 </body>
 </html>
