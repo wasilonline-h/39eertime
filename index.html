@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>استراتيجية غبقة عصير تايم: بصوتكم - رمضان 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Warm/Gold Palette */
+            --brand-purple: #5D2E8E;
+            --brand-orange: #E85D04;
+            --brand-gold: #FFBA08;   
+
+            /* Default Dark Theme */
+            --bg-color: #120919;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            
+            --card-bg: linear-gradient(135deg, rgba(93, 46, 142, 0.15), rgba(232, 93, 4, 0.05));
+            --card-border: rgba(255, 186, 8, 0.2);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            
+            --nav-bg: rgba(0, 0, 0, 0.4);
+            --nav-dot: rgba(255, 255, 255, 0.3);
+            --nav-dot-active: #FFBA08;
+        }
+
+        [data-theme="light"] {
+            /* Light Theme */
+            --bg-color: #FFF9F0; 
+            --text-primary: #2D1B4E;
+            --text-secondary: #5D2E8E;
+            --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 249, 240, 0.8));
+            --card-border: rgba(93, 46, 142, 0.15);
+            --card-shadow: 0 8px 32px 0 rgba(93, 46, 142, 0.05);
+            --nav-bg: rgba(93, 46, 142, 0.05);
+            --nav-dot: rgba(0, 0, 0, 0.2);
+            --nav-dot-active: #E85D04;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-brand-gold { color: var(--brand-gold); }
+        .text-brand-orange { color: var(--brand-orange); }
+        .text-brand-purple { color: var(--brand-purple); }
+
+        /* Animated Waveform Background */
+        .wave-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150vw;
+            height: 150vw;
+            background: radial-gradient(circle, rgba(93, 46, 142, 0.2) 0%, rgba(0,0,0,0) 70%);
+            z-index: 0;
+            animation: pulseWave 4s infinite ease-in-out;
+        }
+        
+        @keyframes pulseWave {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+        }
+
+        /* Slide System */
+        #main-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide-container {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            opacity: 0.3;
+            transform: scale(0.95);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .slide-container.in-view {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+        }
+
+        .slide-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        .card-frosted {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            transition: background 0.5s ease;
+        }
+
+        /* Voice Note Waveform Animation */
+        .voice-note-player {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 40px;
+            width: 100%;
+            justify-content: center;
+        }
+        .bar {
+            width: 4px;
+            background: var(--brand-gold);
+            border-radius: 2px;
+            animation: sound 1s infinite ease-in-out;
+        }
+        .bar:nth-child(odd) { animation-duration: 0.8s; background: var(--brand-orange); }
+        .bar:nth-child(2n) { animation-duration: 1.1s; }
+        .bar:nth-child(3n) { animation-duration: 1.3s; }
+        
+        @keyframes sound {
+            0%, 100% { height: 10px; }
+            50% { height: 30px; }
+        }
+
+        /* Horizontal Scroller */
+        .recipe-scroller {
+            display: flex;
+            overflow-x: auto;
+            gap: 1.5rem;
+            padding: 1rem;
+            width: 100%;
+            scroll-snap-type: x mandatory;
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        .recipe-scroller::-webkit-scrollbar { display: none; }
+        
+        .recipe-card {
+            flex: 0 0 85%;
+            max-width: 320px;
+            scroll-snap-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .recipe-scroller { justify-content: center; flex-wrap: wrap; overflow-x: visible; }
+            .recipe-card { flex: 0 0 30%; scroll-snap-align: none; }
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(to right, var(--brand-gold), var(--brand-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* UI Elements */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 25px; 
+            top: calc(25px + env(safe-area-inset-top)); 
+            right: 25px; 
+            right: calc(25px + env(safe-area-inset-right));
+            z-index: 999;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .copyright {
+            position: fixed;
+            bottom: 15px;
+            bottom: calc(15px + env(safe-area-inset-bottom));
+            right: 25px;
+            right: calc(25px + env(safe-area-inset-right));
+            z-index: 100;
+            opacity: 0.8;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .scroll-hint {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            opacity: 0.7;
+            animation: bounceVertical 2s infinite;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+        }
+        @keyframes bounceVertical {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-10px);}
+            60% {transform: translateX(-50%) translateY(-5px);}
+        }
+
+        @media (min-width: 768px) {
+            .theme-toggle-btn { top: 30px; right: 30px; }
+            .copyright { font-size: 0.9rem; right: 30px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wave-bg"></div>
+
+    <button class="theme-toggle-btn" id="themeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
+    <div class="copyright font-english">&copy; The Digital Campus co. 2026</div>
+
+    <main id="main-container">
+
+        <!-- SLIDE 0: TITLE -->
+        <div class="slide-container" id="slide-0">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-7xl flex flex-col md:flex-row items-center justify-between p-4 gap-8">
+                    <div class="w-full md:w-1/2 space-y-6 text-center md:text-right z-20 order-2 md:order-1">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full card-frosted border-l-4 border-l-[#FFBA08] justify-center md:justify-start">
+                            <span class="text-xs md:text-sm font-bold tracking-wider text-primary">RAMADAN 2026: COMMUNITY EDITION</span>
+                        </div>
+                        <h1 class="text-5xl md:text-8xl font-black leading-tight">
+                            <span class="text-primary block">سوالف</span>
+                            <span class="text-gradient-gold block">عصير تايم 🎙️</span>
+                        </h1>
+                        <h2 class="text-lg md:text-2xl text-primary font-light font-english tracking-wide">
+                            SAWALIF ASEER TIME
+                        </h2>
+                        <p class="text-lg md:text-xl text-primary leading-relaxed">
+                            نحن لا نكتب السيناريو... <span class="text-brand-orange font-bold">أنتم تكتبونه!</span>
+                            <br>علي نجم يستضيف قصصكم الصوتية الحقيقية في استوديو عصير تايم.
+                        </p>
+                    </div>
+                    <div class="w-full md:w-1/2 flex items-center justify-center relative order-1 md:order-2">
+                        <div class="relative w-[280px] h-[400px] md:w-[380px] md:h-[550px] rounded-3xl overflow-hidden shadow-2xl z-10 border border-white/20 group card-frosted p-0">
+                            <img src="ali.png" class="w-full h-full object-cover" alt="Ali Najim">
+                            <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 text-center">
+                                <div class="voice-note-player mb-2">
+                                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                                </div>
+                                <span class="text-brand-gold font-bold text-lg">جارِ الاستماع...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 1: THE STRATEGY (UGC) -->
+        <div class="slide-container" id="slide-1">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-5xl text-center">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4">01</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-8 text-primary">الاستراتيجية: المحتوى من الجمهور</h2>
+                    <div class="card-frosted p-8 md:p-12 w-full relative overflow-hidden">
+                        <p class="text-lg md:text-2xl text-primary leading-loose font-medium">
+                            بدلاً من أن يخبرنا علي بقصصه، سيستمع إلى <span class="text-brand-orange font-bold">قصص الناس</span>.
+                            <br><br>
+                            <strong>قبل رمضان (شعبان):</strong> نطلق حملة "أرسل فويس نوت" لأطرف أو أغرب موقف رمضاني صار لك.
+                            <br><br>
+                            <strong>في رمضان:</strong> علي يجلس في الاستوديو، يشغل الفويس نوت (يسمعه الملايين)، يتفاعل معه بعفوية، ويهديه "عصير تايم" يناسب الموقف.
+                        </p>
+                        <div class="mt-6 flex justify-center gap-4 text-sm text-secondary">
+                            <span class="px-3 py-1 bg-white/10 rounded-full">⚡ تفاعل عالي</span>
+                            <span class="px-3 py-1 bg-white/10 rounded-full">🤣 كوميديا واقعية</span>
+                            <span class="px-3 py-1 bg-white/10 rounded-full">🎥 إنتاج استوديو</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: THE RECRUITMENT PHASE -->
+        <div class="slide-container" id="slide-2">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-6xl">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4 text-center">02</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-12 text-center text-primary">مرحلة التجنيد (Pre-Ramadan)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                        <div class="card-frosted p-8 border-b-4 border-brand-purple">
+                            <i class="fas fa-microphone-alt text-4xl text-brand-purple mb-4"></i>
+                            <h3 class="text-xl font-bold text-primary mb-2">الدعوة (The Call)</h3>
+                            <p class="text-primary text-sm leading-relaxed">
+                                فيديو من علي نجم: "عندك سالفة غبقة تضحك؟ أو هوشة سحور؟ دزلي فويس نوت... أبي أسمعك!"
+                                <br>يتم النشر على انستغرام وتيك توك.
+                            </p>
+                        </div>
+                        <div class="card-frosted p-8 border-b-4 border-brand-gold">
+                            <i class="fas fa-gift text-4xl text-brand-gold mb-4"></i>
+                            <h3 class="text-xl font-bold text-primary mb-2">المحفز (The Hook)</h3>
+                            <p class="text-primary text-sm leading-relaxed">
+                                "إذا أذعنا سالفتك، لك بوكس سحور ملكي من عصير تايم لك ولربعك."
+                                <br>فرصة الشهرة + جائزة فورية.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: THE EPISODE FORMAT -->
+        <div class="slide-container" id="slide-3">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-7xl px-4">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4 text-center">03</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-10 text-center text-primary">سيناريو الحلقة (The Episode)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Step 1 -->
+                        <div class="card-frosted p-6 text-center">
+                            <div class="voice-note-player mb-4 justify-center"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+                            <h3 class="font-bold text-primary text-xl">1. الفويس نوت</h3>
+                            <p class="text-sm text-secondary mt-2">صورة موجات صوتية على الشاشة. نسمع صوت المشارك يحكي الموقف (15 ثانية).</p>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="card-frosted p-6 text-center border-t-2 border-brand-orange">
+                            <i class="fas fa-laugh-squint text-4xl text-brand-orange mb-4"></i>
+                            <h3 class="font-bold text-primary text-xl">2. ردة الفعل</h3>
+                            <p class="text-sm text-secondary mt-2">الكاميرا على علي. يضحك، يعلق، أو ينصدم. "لا مستحيل! من صجك؟"</p>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="card-frosted p-6 text-center">
+                            <i class="fas fa-glass-cheers text-4xl text-brand-gold mb-4"></i>
+                            <h3 class="font-bold text-primary text-xl">3. الإهداء</h3>
+                            <p class="text-sm text-secondary mt-2">"يا فلان، سالفتك تبي لها شيء بارد." يرفع كأس عصير تايم للكاميرا.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: AUDIENCE STORY EXAMPLES -->
+        <div class="slide-container" id="slide-4">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-7xl px-4">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4 text-center">04</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">أمثلة من قصص الجمهور</h2>
+                    <div class="recipe-scroller">
+                        
+                        <!-- Story 1 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-brand-orange">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-orange/20 flex items-center justify-center text-brand-orange"><i class="fas fa-users"></i></div>
+                                <span class="bg-white/10 px-2 py-1 rounded text-[10px] text-brand-gold">VOICE NOTE</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">لخبطة الغبقة</h3>
+                            <p class="text-xs text-secondary mb-3">من: دلال</p>
+                            <div class="bg-black/20 p-3 rounded-lg mb-4 italic text-sm text-secondary border-r-2 border-brand-orange">
+                                "دخلت ديوانية غلط وسلمت على 20 واحد وبست راس الشايب... وآخر شي اكتشفت اني مضيعة البيت!"
+                            </div>
+                            <div class="border-t border-white/10 pt-3">
+                                <p class="text-xs text-brand-gold font-bold mb-1">رد علي:</p>
+                                <p class="text-sm text-primary">"دلال، إنتي كسبتي أجر وصلة الرحم بالغلط! يبي لج عصير <span class="text-brand-orange">عوار قلب</span> يهدي الصدمة."</p>
+                            </div>
+                        </div>
+
+                        <!-- Story 2 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-brand-purple">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple"><i class="fas fa-bed"></i></div>
+                                <span class="bg-white/10 px-2 py-1 rounded text-[10px] text-brand-gold">VOICE NOTE</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">نومة السحور</h3>
+                            <p class="text-xs text-secondary mb-3">من: حمد</p>
+                            <div class="bg-black/20 p-3 rounded-lg mb-4 italic text-sm text-secondary border-r-2 border-brand-purple">
+                                "حطيت 10 منبهات عشان أقوم أتسحر، قمت والدنيا شمس... وشربت ماي بالغلط!"
+                            </div>
+                            <div class="border-t border-white/10 pt-3">
+                                <p class="text-xs text-brand-gold font-bold mb-1">رد علي:</p>
+                                <p class="text-sm text-primary">"حمد، وضعك مأساوي! بس لا تحاتي، الفطور اليوم برعاية <span class="text-brand-purple">سيجنتشر</span> عشان يعوضك."</p>
+                            </div>
+                        </div>
+
+                        <!-- Story 3 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-brand-gold">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold"><i class="fas fa-tshirt"></i></div>
+                                <span class="bg-white/10 px-2 py-1 rounded text-[10px] text-brand-gold">VOICE NOTE</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">كارثة الدشداشة</h3>
+                            <p class="text-xs text-secondary mb-3">من: فواز</p>
+                            <div class="bg-black/20 p-3 rounded-lg mb-4 italic text-sm text-secondary border-r-2 border-brand-gold">
+                                "كاشخ بدشداشة العيد قبل العيد بيومين، وكتيت فيمتو على نفسي بالسيارة قبل لا أوصل."
+                            </div>
+                            <div class="border-t border-white/10 pt-3">
+                                <p class="text-xs text-brand-gold font-bold mb-1">رد علي:</p>
+                                <p class="text-sm text-primary">"أوف! هذي تعور القلب صج. مالك إلا <span class="text-brand-gold">يسرسح</span> يبرد على قلبك... والدشداشة تتعوض!"</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: JUICE RECIPES (PRODUCT OUTPUT) -->
+        <div class="slide-container" id="slide-5">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-7xl px-4">
+                    <div class="text-6xl md:text-9xl font-black text-primary opacity-20 mb-4 text-center">05</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">قائمة "المزاج" (The Menu)</h2>
+                    <div class="recipe-scroller">
+                        
+                        <!-- Recipe 1 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-red-500">
+                            <div class="text-4xl mb-4 text-red-400"><i class="fas fa-car-crash"></i></div>
+                            <h3 class="text-xl font-bold text-primary mb-1">علاج الزحمة</h3>
+                            <p class="text-xs text-secondary mb-3">الحل:</p>
+                            <div class="bg-white/10 p-3 rounded-lg mb-3">
+                                <h4 class="font-bold text-brand-gold text-lg">"برّد على قلبك"</h4>
+                                <p class="text-xs text-primary mt-1">رقي مثلج + ماي ورد + ليمون</p>
+                            </div>
+                            <p class="text-xs italic text-secondary">"زحمة الشارع ولا زحمة المخ... اشرب وانسى!"</p>
+                        </div>
+
+                        <!-- Recipe 2 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-yellow-400">
+                            <div class="text-4xl mb-4 text-yellow-400"><i class="fas fa-bolt"></i></div>
+                            <h3 class="text-xl font-bold text-primary mb-1">شاحن الطاقة</h3>
+                            <p class="text-xs text-secondary mb-3">الحل:</p>
+                            <div class="bg-white/10 p-3 rounded-lg mb-3">
+                                <h4 class="font-bold text-brand-gold text-lg">"باور بانك"</h4>
+                                <p class="text-xs text-primary mt-1">تمر + موز + زبدة فول سوداني</p>
+                            </div>
+                            <p class="text-xs italic text-secondary">"لا تدور شاحن، اشرب هذا واركض لمكة!"</p>
+                        </div>
+
+                        <!-- Recipe 3 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-pink-500">
+                            <div class="text-4xl mb-4 text-pink-500"><i class="fas fa-heart"></i></div>
+                            <h3 class="text-xl font-bold text-primary mb-1">جرعة الدلال</h3>
+                            <p class="text-xs text-secondary mb-3">الحل:</p>
+                            <div class="bg-white/10 p-3 rounded-lg mb-3">
+                                <h4 class="font-bold text-brand-gold text-lg">"فرحة العيد"</h4>
+                                <p class="text-xs text-primary mt-1">مانجا + آيس كريم + كيندر</p>
+                            </div>
+                            <p class="text-xs italic text-secondary">"السعرات ما تنحسب برمضان... أعتقد."</p>
+                        </div>
+
+                        <!-- Recipe 4 -->
+                        <div class="recipe-card card-frosted p-6 border-b-4 border-green-500">
+                            <div class="text-4xl mb-4 text-green-500"><i class="fas fa-users"></i></div>
+                            <h3 class="text-xl font-bold text-primary mb-1">مخفف التوتر</h3>
+                            <p class="text-xs text-secondary mb-3">الحل:</p>
+                            <div class="bg-white/10 p-3 rounded-lg mb-3">
+                                <h4 class="font-bold text-brand-gold text-lg">"رواق"</h4>
+                                <p class="text-xs text-primary mt-1">أفوكادو + عسل + كاجو</p>
+                            </div>
+                            <p class="text-xs italic text-secondary">"خلك مشغول بالمكسرات ولا تجاوبهم."</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: VISUAL STYLE -->
+        <div class="slide-container" id="slide-6">
+            <div class="slide-inner">
+                <div class="w-11/12 max-w-6xl flex flex-col md:flex-row gap-8 items-center">
+                    <div class="w-full md:w-1/2 text-center md:text-right space-y-6">
+                        <h2 class="text-4xl md:text-5xl font-bold text-primary leading-tight">الهوية البصرية<br><span class="text-gradient-gold">Audio-Visual</span></h2>
+                        <p class="text-primary text-base">
+                            نركز على عنصر "الصوت" بصرياً. موجات صوتية تتحرك مع كلام الناس، وألوان دافئة تعكس جو رمضان.
+                        </p>
+                        <div class="card-frosted p-4 border-r-4 border-brand-gold">
+                            <h4 class="font-bold text-primary">الجرافيكس</h4>
+                            <p class="text-sm text-secondary">موجات صوتية (Waveforms) تتحرك وتتفاعل مع الضحك والكلام.</p>
+                        </div>
+                        <div class="card-frosted p-4 border-r-4 border-brand-purple">
+                            <h4 class="font-bold text-primary">الإضاءة</h4>
+                            <p class="text-sm text-secondary">دافئة، حميمية (Warm & Cozy Studio)، تشعرك أنك جالس مع علي.</p>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 flex justify-center items-center h-64 relative">
+                        <div class="voice-note-player scale-150">
+                            <div class="bar h-12 w-2 bg-brand-gold mx-1"></div>
+                            <div class="bar h-16 w-2 bg-brand-orange mx-1"></div>
+                            <div class="bar h-8 w-2 bg-brand-purple mx-1"></div>
+                            <div class="bar h-20 w-2 bg-white mx-1"></div>
+                            <div class="bar h-10 w-2 bg-brand-gold mx-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: CLOSING -->
+        <div class="slide-container" id="slide-7">
+            <div class="slide-inner">
+                <div class="w-full max-w-5xl text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-primary">النتيجة (Impact)</h2>
+                    <div class="grid grid-cols-3 gap-4 mb-10 w-full px-4">
+                        <div class="card-frosted p-4">
+                            <div class="text-3xl font-black text-brand-gold">Viral</div>
+                            <div class="text-sm font-bold text-primary">Sharing</div>
+                            <p class="text-[10px] text-secondary">People share their own voice</p>
+                        </div>
+                        <div class="card-frosted p-4">
+                            <div class="text-3xl font-black text-brand-orange">Easy</div>
+                            <div class="text-sm font-bold text-primary">Production</div>
+                            <p class="text-[10px] text-secondary">No location scouting</p>
+                        </div>
+                        <div class="card-frosted p-4">
+                            <div class="text-3xl font-black text-brand-purple">Real</div>
+                            <div class="text-sm font-bold text-primary">Content</div>
+                            <p class="text-[10px] text-secondary">Authentic stories</p>
+                        </div>
+                    </div>
+                    <div class="card-frosted p-8 inline-block border-t-4 border-[#FFBA08] mx-4">
+                        <p class="text-lg md:text-2xl text-primary mb-2 md:mb-4">رمضان 2026...</p>
+                        <h1 class="text-3xl md:text-5xl font-black text-primary mb-2">سوالف عصير تايم...</h1>
+                        <h1 class="text-4xl md:text-6xl font-black text-gradient-gold">بصوتكم!</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MINIMAL NAV DOTS (Bottom) -->
+    <div class="min-nav" id="dots-container"></div>
+    
+    <!-- Swipe Hint -->
+    <div class="scroll-hint">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+
+    <!-- LOGO WATERMARK -->
+    <div class="fixed top-4 left-4 md:top-8 md:left-8 z-50 opacity-100" style="top: calc(15px + env(safe-area-inset-top)); left: calc(15px + env(safe-area-inset-left));">
+        <img src="logo.png" alt="39er Time Logo" class="h-10 md:h-16 w-auto object-contain drop-shadow-lg">
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide-container');
+        const dotsContainer = document.getElementById('dots-container');
+        let currentSlide = 0;
+
+        // Create Dots
+        slides.forEach((slide, index) => {
+            const dot = document.createElement('div');
+            dot.className = `nav-dot cursor-pointer ${index === 0 ? 'active' : ''}`;
+            dot.onclick = () => {
+                slide.scrollIntoView({ behavior: 'smooth' });
+            };
+            dotsContainer.appendChild(dot);
+        });
+        const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+        const observerOptions = { root: document.getElementById('main-container'), threshold: 0.5 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    const index = Array.from(slides).indexOf(entry.target);
+                    currentSlide = index;
+                    
+                    dots.forEach(d => d.classList.remove('active'));
+                    if(dots[index]) dots[index].classList.add('active');
+
+                    const hint = document.querySelector('.scroll-hint');
+                    hint.style.display = (index === slides.length - 1) ? 'none' : 'block';
+                } else {
+                    entry.target.classList.remove('in-view');
+                }
+            });
+        }, observerOptions);
+
+        slides.forEach(slide => observer.observe(slide));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' && currentSlide < slides.length - 1) {
+                slides[currentSlide + 1].scrollIntoView({ behavior: 'smooth' });
+            } else if (e.key === 'ArrowUp' && currentSlide > 0) {
+                slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Theme Toggle
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const htmlElement = document.documentElement;
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const newTheme = htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    </script>
+</body>
+</html>
